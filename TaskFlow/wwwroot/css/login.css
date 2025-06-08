@@ -9,32 +9,31 @@ html, body {
     background-color: #f8f9fa;
 }
 
-/* Wrapper centrado y flexible */
+/* Wrapper centrado */
 .login-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
     padding: 1rem;
-    background-color: #f8f9fa;
 }
 
-/* Tarjeta principal */
+/* Tarjeta responsive */
 .login-card {
     width: 100%;
     max-width: 420px;
-    margin: 0 0.5rem;
-    background-color: #ffffff;
+    background-color: #fff;
     border-radius: 0.75rem;
     padding: 2rem;
     box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
     animation: fadeIn 0.4s ease-in-out;
+    font-size: 1rem;
 }
 
-    /* Títulos centrados */
+    /* Títulos */
     .login-card h3 {
         text-align: center;
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         margin-bottom: 1.5rem;
     }
 
@@ -45,10 +44,11 @@ html, body {
     }
 
     .login-card button {
-        margin-top: 0.5rem;
+        margin-top: 0.75rem;
+        padding: 0.6rem;
     }
 
-    /* Link de registro */
+    /* Link */
     .login-card .text-center a {
         font-weight: 500;
         text-decoration: none;
@@ -58,7 +58,7 @@ html, body {
             text-decoration: underline;
         }
 
-/* Animación de entrada */
+/* Animación */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -71,32 +71,30 @@ html, body {
     }
 }
 
-/* Responsive fino */
-@media (max-width: 375px) {
+/* ✅ Móviles: agrandar fuente y reducir márgenes */
+@media (max-width: 480px) {
     .login-card {
-        padding: 1.5rem 1rem;
+        max-width: 95vw;
+        padding: 1.8rem 1.2rem;
+        font-size: 1.05rem;
     }
 
         .login-card h3 {
-            font-size: 1.25rem;
+            font-size: 1.4rem;
         }
 
         .login-card input,
         .login-card button {
-            font-size: 0.95rem;
-        }
-}
-@media (max-width: 480px) {
-    .login-card {
-        font-size: 1.1rem;
-    }
-
-        .login-card h3 {
-            font-size: 1.5rem;
+            font-size: 1.05rem;
         }
 
         .login-card button {
             padding: 0.75rem;
-            font-size: 1.1rem;
         }
+}
+@media (max-width: 480px) {
+    .login-wrapper {
+        align-items: flex-start;
+        padding-top: 3rem;
+    }
 }
