@@ -1,0 +1,102 @@
+﻿/* login.css */
+
+/* Reset general */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Wrapper centrado y flexible */
+.login-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1rem;
+    background-color: #f8f9fa;
+}
+
+/* Tarjeta principal */
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 0.5rem;
+    background-color: #ffffff;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+    /* Títulos centrados */
+    .login-card h3 {
+        text-align: center;
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Inputs y botones */
+    .login-card input,
+    .login-card button {
+        font-size: 1rem;
+    }
+
+    .login-card button {
+        margin-top: 0.5rem;
+    }
+
+    /* Link de registro */
+    .login-card .text-center a {
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+        .login-card .text-center a:hover {
+            text-decoration: underline;
+        }
+
+/* Animación de entrada */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive fino */
+@media (max-width: 375px) {
+    .login-card {
+        padding: 1.5rem 1rem;
+    }
+
+        .login-card h3 {
+            font-size: 1.25rem;
+        }
+
+        .login-card input,
+        .login-card button {
+            font-size: 0.95rem;
+        }
+}
+@media (max-width: 480px) {
+    .login-card {
+        font-size: 1.1rem;
+    }
+
+        .login-card h3 {
+            font-size: 1.5rem;
+        }
+
+        .login-card button {
+            padding: 0.75rem;
+            font-size: 1.1rem;
+        }
+}

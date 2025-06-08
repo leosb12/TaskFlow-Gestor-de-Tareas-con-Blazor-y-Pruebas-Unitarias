@@ -1,0 +1,93 @@
+﻿@page "/tareas"
+@inject TaskFlow.Services.TareaService TareaService
+@inject AuthStateService Auth
+@inject NavigationManager Navigation
+@using TaskFlow.Models
+
+<h3 class="mb-4">📝 Mis Tareas</h3>
+
+@if (!Auth.EstaLogueado)
+{
+    <div class="alert alert-danger">
+        Debes iniciar sesión para ver tus tareas.
+    </div>
+}
+else
+{
+    <p>Bienvenido, <strong>@Auth.UsuarioActual.Nombre</strong></p>
+
+    <div class="mb-3 d-flex gap-2 align-items-center">
+        <input class="form-control w-50"
+               placeholder="Nueva tarea"
+               @bind="nuevaTarea.Titulo" />
+
+        <button class="btn btn-primary" @onclick="CrearTarea">Agregar</button>
+    </div>
+
+    @if (tareas.Count == 0)
+    {
+        <div class="alert alert-info">No hay tareas registradas.</div>
+    }
+    else
+    {
+        <ul class="list-group">
+            @foreach (var tarea in tareas)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <input type="checkbox"
+                               class="form-check-input me-2"
+                               checked="@tarea.Completada"
+                               @onchange="() => MarcarComoCompletada(tarea.Id)" />
+
+                        <span style="@(tarea.Completada ? "text-decoration: line-through;" : "")">
+                            @tarea.Titulo
+                        </span>
+                    </div>
+                    <button class="btn btn-sm btn-danger" @onclick="() => EliminarTarea(tarea.Id)">
+                        🗑️ Eliminar
+                    </button>
+                </li>
+            }
+        </ul>
+    }
+}
+
+@code {
+    private List<Tarea> tareas = new();
+    private Tarea nuevaTarea = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Auth.EstaLogueado)
+        {
+            Navigation.NavigateTo("/login", true);
+            return;
+        }
+
+        tareas = await TareaService.ObtenerTareasAsync();
+    }
+
+    private async Task CrearTarea()
+    {
+        if (!string.IsNullOrWhiteSpace(nuevaTarea.Titulo))
+        {
+            nuevaTarea.UsuarioId = Auth.UsuarioActual?.Id ?? 0;
+            await TareaService.CrearTareaAsync(nuevaTarea);
+            nuevaTarea = new();
+            tareas = await TareaService.ObtenerTareasAsync();
+        }
+    }
+
+    private async Task MarcarComoCompletada(int id)
+    {
+        await TareaService.MarcarComoCompletadaAsync(id);
+        tareas = await TareaService.ObtenerTareasAsync();
+    }
+
+    private async Task EliminarTarea(int id)
+    {
+        await TareaService.EliminarTareaAsync(id);
+        tareas = await TareaService.ObtenerTareasAsync();
+    }
+}

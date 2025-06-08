@@ -1,0 +1,61 @@
+﻿@page "/login"
+@inject NavigationManager Navigation
+@inject TaskFlow.Services.AuthService AuthService
+@inject AuthStateService Auth
+@using Microsoft.AspNetCore.Components.Forms
+@using TaskFlow.Models
+
+<main class="login-wrapper">
+    <div class="login-card">
+
+        <h3 class="text-center mb-4">🔐 Iniciar Sesión</h3>
+
+        <EditForm Model="@credenciales" OnValidSubmit="IniciarSesion">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label class="form-label">Correo</label>
+                <InputText class="form-control" @bind-Value="credenciales.Correo" />
+                <ValidationMessage For="@(() => credenciales.Correo)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <InputText class="form-control" type="password" @bind-Value="credenciales.Contrasena" />
+                <ValidationMessage For="@(() => credenciales.Contrasena)" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(mensajeError))
+            {
+                <div class="alert alert-danger">@mensajeError</div>
+            }
+
+            <button class="btn btn-primary w-100" type="submit">Entrar</button>
+
+            <div class="text-center mt-3">
+                ¿No tienes cuenta? <a href="/register">Regístrate</a>
+            </div>
+        </EditForm>
+
+    </div>
+</main>
+
+@code {
+    private LoginModel credenciales = new();
+    private string mensajeError = "";
+
+    private async Task IniciarSesion()
+    {
+        var usuario = await AuthService.LoginAsync(credenciales.Correo, credenciales.Contrasena);
+        if (usuario is not null)
+        {
+            await Auth.IniciarSesionAsync(usuario);
+            Navigation.NavigateTo("/tareas");
+        }
+        else
+        {
+            mensajeError = "Correo o contraseña incorrectos.";
+        }
+    }
+}

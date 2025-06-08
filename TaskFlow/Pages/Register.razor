@@ -1,0 +1,69 @@
+﻿@page "/register"
+@inject NavigationManager Navigation
+@inject TaskFlow.Services.AuthService AuthService
+@using TaskFlow.Models
+@using Microsoft.AspNetCore.Components.Forms
+
+<h3 class="text-center my-4">📝 Crear una cuenta</h3>
+
+<div class="container d-flex justify-content-center">
+    <div class="card p-4 shadow" style="width: 100%; max-width: 450px;">
+        <EditForm Model="@nuevoUsuario" OnValidSubmit="RegistrarUsuario">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label class="form-label">Nombre completo</label>
+                <InputText class="form-control" @bind-Value="nuevoUsuario.Nombre" />
+                <ValidationMessage For="@(() => nuevoUsuario.Nombre)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Correo</label>
+                <InputText class="form-control" @bind-Value="nuevoUsuario.Correo" />
+                <ValidationMessage For="@(() => nuevoUsuario.Correo)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" />
+                <ValidationMessage For="@(() => nuevoUsuario.Contrasena)" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(mensaje))
+            {
+                <div class="alert @mensajeClase">@mensaje</div>
+            }
+
+            <button type="submit" class="btn btn-success w-100">Registrarse</button>
+
+            <div class="text-center mt-3">
+                ¿Ya tenés cuenta? <a href="/login">Inicia sesión</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private RegisterModel nuevoUsuario = new();
+    private string mensaje = "";
+    private string mensajeClase = "";
+
+    private async Task RegistrarUsuario()
+    {
+        var exito = await AuthService.RegistrarAsync(nuevoUsuario);
+
+        if (exito)
+        {
+            mensaje = "Usuario registrado correctamente. Redirigiendo...";
+            mensajeClase = "alert alert-success";
+            await Task.Delay(2000);
+            Navigation.NavigateTo("/login");
+        }
+        else
+        {
+            mensaje = "Ese correo ya está registrado.";
+            mensajeClase = "alert alert-danger";
+        }
+    }
+}
