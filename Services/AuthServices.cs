@@ -6,22 +6,25 @@ namespace TaskFlow.Services
 {
     public class AuthService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
 
-        public AuthService(ApplicationDbContext context)
+        public AuthService(IDbContextFactory<ApplicationDbContext> contextFactory)
         {
-            _context = context;
+            _contextFactory = contextFactory;
         }
 
         public async Task<Usuario?> LoginAsync(string correo, string contrasena)
         {
-            return await _context.Usuarios
+            using var context = _contextFactory.CreateDbContext();
+            return await context.Usuarios
                 .FirstOrDefaultAsync(u => u.Correo == correo && u.Contrasena == contrasena);
         }
 
         public async Task<bool> RegistrarAsync(RegisterModel model)
         {
-            if (await _context.Usuarios.AnyAsync(u => u.Correo == model.Correo))
+            using var context = _contextFactory.CreateDbContext();
+
+            if (await context.Usuarios.AnyAsync(u => u.Correo == model.Correo))
                 return false;
 
             var nuevo = new Usuario
@@ -31,8 +34,8 @@ namespace TaskFlow.Services
                 Contrasena = model.Contrasena
             };
 
-            _context.Usuarios.Add(nuevo);
-            await _context.SaveChangesAsync();
+            context.Usuarios.Add(nuevo);
+            await context.SaveChangesAsync();
             return true;
         }
     }
