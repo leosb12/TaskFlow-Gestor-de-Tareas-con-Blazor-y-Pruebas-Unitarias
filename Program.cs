@@ -16,7 +16,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TareaService>();
 builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddScoped<AuthStateService>();
-
+builder.Services.AddServerSideBlazor()
+    .AddCircuitOptions(options => options.DetailedErrors = true);
 
 
 var app = builder.Build();
@@ -27,6 +28,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseDeveloperExceptionPage(); // si estás en entorno Dev
 
 app.UseHttpsRedirection();
 
@@ -38,3 +40,4 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
+
