@@ -1,25 +1,17 @@
-# Etapa de compilación
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-
-# Copiar todo el contenido
-COPY . .
-
-# Restaurar dependencias
-RUN dotnet restore
-
-# Publicar en modo Release a la carpeta /app
-RUN dotnet publish -c Release -o /app
-
-# Etapa de ejecución
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 
-# Copiar desde la build
-COPY --from=build /app .
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY . .
+RUN dotnet restore
+RUN dotnet publish -c Release -o /app/publish
 
-# Puerto expuesto (Railway lo detecta automáticamente si usás el puerto 80)
-EXPOSE 80
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/publish .
 
-# Iniciar la app (cambiá TaskFlow.dll si tu proyecto se llama distinto)
+ENV ASPNETCORE_URLS=http://+:8080
+
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "TaskFlow.dll"]
