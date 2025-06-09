@@ -27,6 +27,13 @@ namespace TaskFlow.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task ActualizarTareaAsync(Tarea tarea)
+        {
+            _context.Tareas.Update(tarea);
+            await _context.SaveChangesAsync();
+        }
+
+
         public async Task MarcarComoCompletadaAsync(int id)
         {
             var tarea = await _context.Tareas.FindAsync(id);

@@ -4,41 +4,44 @@
 @using TaskFlow.Models
 @using Microsoft.AspNetCore.Components.Forms
 
-<h3 class="text-center my-4">📝 Crear una cuenta</h3>
+<div style="min-height: 100vh; background-color: #0d1117; display: flex; justify-content: center; align-items: center; padding: 1rem;">
+    <div style="background-color: #161b22; padding: 2rem; border-radius: 16px; width: 100%; max-width: 400px; box-shadow: 0 0 15px rgba(0,0,0,0.5); color: white;">
 
-<div class="container d-flex justify-content-center">
-    <div class="card p-4 shadow" style="width: 100%; max-width: 450px;">
+        <h3 class="text-center mb-4" style="color: #58a6ff;">📝 Crear una cuenta</h3>
+
         <EditForm Model="@nuevoUsuario" OnValidSubmit="RegistrarUsuario">
             <DataAnnotationsValidator />
-            <ValidationSummary />
+            <ValidationSummary style="color: #f85149;" />
 
             <div class="mb-3">
-                <label class="form-label">Nombre completo</label>
-                <InputText class="form-control" @bind-Value="nuevoUsuario.Nombre" />
-                <ValidationMessage For="@(() => nuevoUsuario.Nombre)" />
+                <label style="color: #c9d1d9;" class="form-label">Nombre completo</label>
+                <InputText class="form-control" style="background-color: #0d1117; border: 1px solid #30363d; color: white;" @bind-Value="nuevoUsuario.Nombre" />
+                <ValidationMessage For="@(() => nuevoUsuario.Nombre)" style="color: #f85149;" />
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Correo</label>
-                <InputText class="form-control" @bind-Value="nuevoUsuario.Correo" />
-                <ValidationMessage For="@(() => nuevoUsuario.Correo)" />
+                <label style="color: #c9d1d9;" class="form-label">Correo</label>
+                <InputText class="form-control" style="background-color: #0d1117; border: 1px solid #30363d; color: white;" @bind-Value="nuevoUsuario.Correo" />
+                <ValidationMessage For="@(() => nuevoUsuario.Correo)" style="color: #f85149;" />
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Contraseña</label>
-                <InputText class="form-control" type="password" @bind-Value="nuevoUsuario.Contrasena" />
-                <ValidationMessage For="@(() => nuevoUsuario.Contrasena)" />
+                <label style="color: #c9d1d9;" class="form-label">Contraseña</label>
+                <InputText class="form-control" type="password" style="background-color: #0d1117; border: 1px solid #30363d; color: white;" @bind-Value="nuevoUsuario.Contrasena" />
+                <ValidationMessage For="@(() => nuevoUsuario.Contrasena)" style="color: #f85149;" />
             </div>
 
             @if (!string.IsNullOrEmpty(mensaje))
             {
-                <div class="alert @mensajeClase">@mensaje</div>
+                <div class="@mensajeClase text-center">@mensaje</div>
             }
 
-            <button type="submit" class="btn btn-success w-100">Registrarse</button>
+            <button type="submit" class="btn w-100 mt-2" style="background-color: #238636; color: white; font-weight: bold;">
+                Registrarse
+            </button>
 
-            <div class="text-center mt-3">
-                ¿Ya tenés cuenta? <a href="/login">Inicia sesión</a>
+            <div class="text-center mt-4" style="color: #8b949e;">
+                ¿Ya tenés cuenta? <a href="/login" style="color: #58a6ff;">Inicia sesión</a>
             </div>
         </EditForm>
     </div>
@@ -55,15 +58,15 @@
 
         if (exito)
         {
-            mensaje = "Usuario registrado correctamente. Redirigiendo...";
-            mensajeClase = "alert alert-success";
+            mensaje = "✅ Usuario registrado correctamente. Redirigiendo...";
+            mensajeClase = "alert alert-success mt-3";
             await Task.Delay(2000);
             Navigation.NavigateTo("/login");
         }
         else
         {
-            mensaje = "Ese correo ya está registrado.";
-            mensajeClase = "alert alert-danger";
+            mensaje = "⚠️ Ese correo ya está registrado.";
+            mensajeClase = "alert alert-danger mt-3";
         }
     }
 }

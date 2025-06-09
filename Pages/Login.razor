@@ -5,41 +5,43 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using TaskFlow.Models
 
-<main class="login-wrapper">
-    <div class="login-card">
+<div style="min-height: 100vh; background-color: #0d1117; display: flex; justify-content: center; align-items: center; padding: 1rem;">
+    <div style="background-color: #161b22; padding: 2rem; border-radius: 16px; width: 100%; max-width: 380px; box-shadow: 0 0 15px rgba(0,0,0,0.5); color: white;">
 
-        <h3 class="text-center mb-4">🔐 Iniciar Sesión</h3>
+        <h3 class="text-center mb-4" style="color: #58a6ff;">🔐 Iniciar Sesión</h3>
 
         <EditForm Model="@credenciales" OnValidSubmit="IniciarSesion">
             <DataAnnotationsValidator />
-            <ValidationSummary />
+            <ValidationSummary style="color: #f85149;" />
 
             <div class="mb-3">
-                <label class="form-label">Correo</label>
-                <InputText class="form-control" @bind-Value="credenciales.Correo" />
-                <ValidationMessage For="@(() => credenciales.Correo)" />
+                <label style="color: #c9d1d9;" class="form-label">Correo</label>
+                <InputText style="background-color: #0d1117; border: 1px solid #30363d; color: white;" class="form-control" @bind-Value="credenciales.Correo" />
+                <ValidationMessage For="@(() => credenciales.Correo)" style="color: #f85149;" />
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Contraseña</label>
-                <InputText class="form-control" type="password" @bind-Value="credenciales.Contrasena" />
-                <ValidationMessage For="@(() => credenciales.Contrasena)" />
+                <label style="color: #c9d1d9;" class="form-label">Contraseña</label>
+                <InputText style="background-color: #0d1117; border: 1px solid #30363d; color: white;" class="form-control" type="password" @bind-Value="credenciales.Contrasena" />
+                <ValidationMessage For="@(() => credenciales.Contrasena)" style="color: #f85149;" />
             </div>
 
             @if (!string.IsNullOrEmpty(mensajeError))
             {
-                <div class="alert alert-danger">@mensajeError</div>
+                <div class="alert alert-danger text-center">@mensajeError</div>
             }
 
-            <button class="btn btn-primary w-100" type="submit">Entrar</button>
+            <button type="submit" class="btn w-100 mt-2" style="background-color: #238636; color: white; font-weight: bold;">
+                Entrar
+            </button>
 
-            <div class="text-center mt-3">
-                ¿No tienes cuenta? <a href="/register">Regístrate</a>
+            <div class="text-center mt-4" style="color: #8b949e;">
+                ¿No tienes cuenta? <a href="/register" style="color: #58a6ff;">Regístrate</a>
             </div>
         </EditForm>
 
     </div>
-</main>
+</div>
 
 @code {
     private LoginModel credenciales = new();
@@ -47,14 +49,19 @@
 
     private async Task IniciarSesion()
     {
+        Console.WriteLine($"🔍 Intentando iniciar sesión con: {credenciales.Correo}");
+
         var usuario = await AuthService.LoginAsync(credenciales.Correo, credenciales.Contrasena);
+
         if (usuario is not null)
         {
+            Console.WriteLine("✅ Usuario autenticado correctamente.");
             await Auth.IniciarSesionAsync(usuario);
             Navigation.NavigateTo("/tareas");
         }
         else
         {
+            Console.WriteLine("❌ Usuario no encontrado o credenciales incorrectas.");
             mensajeError = "Correo o contraseña incorrectos.";
         }
     }

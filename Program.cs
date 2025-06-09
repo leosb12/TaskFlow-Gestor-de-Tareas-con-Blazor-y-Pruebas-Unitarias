@@ -1,8 +1,7 @@
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using TaskFlow.Data;
 using TaskFlow.Services;
 
@@ -10,15 +9,15 @@ using TaskFlow.Services;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddRazorPages();
+var connectionString = builder.Configuration["DefaultConnection"];
+Console.WriteLine("🔍 Cadena de conexión: " + connectionString); // para depuración
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+    options.UseSqlServer(connectionString));
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TareaService>();
 builder.Services.AddScoped<ProtectedSessionStorage>();
 builder.Services.AddScoped<AuthStateService>();
-builder.Services.AddServerSideBlazor()
-    .AddCircuitOptions(options => options.DetailedErrors = true);
+
 
 
 var app = builder.Build();
@@ -28,8 +27,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-app.UseDeveloperExceptionPage(); // si est�s en entorno Dev
 
 app.UseHttpsRedirection();
 
@@ -41,4 +38,3 @@ app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
-

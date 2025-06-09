@@ -1,3 +1,21 @@
 ﻿@page "/"
+@inject NavigationManager Navigation
 
-<h1>Hello, world!</h1>
+<div class="bg-dark d-flex justify-content-center align-items-center min-vh-100 px-3">
+    <div class="text-center text-light" style="max-width: 500px; width: 100%;">
+        <h1 class="fw-bold mb-3" style="font-size: 2.8rem; color: #4da6ff;">🧠 Bienvenido a TaskFlow</h1>
+        <p class="lead mb-4" style="font-size: 1.25rem;">
+            Organiza tus tareas de forma inteligente, rápida y clara.
+        </p>
+        <button class="btn btn-primary btn-lg px-5 py-3 fs-5 shadow" @onclick="IrCrearTarea">
+            🚀 Empezar
+        </button>
+    </div>
+</div>
+
+@code {
+    private void IrCrearTarea()
+    {
+        Navigation.NavigateTo("/Login");
+    }
+}

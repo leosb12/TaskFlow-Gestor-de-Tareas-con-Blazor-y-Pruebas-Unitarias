@@ -4,54 +4,59 @@
 @inject NavigationManager Navigation
 @using TaskFlow.Models
 
-<h3 class="mb-4">📝 Mis Tareas</h3>
-
-@if (!Auth.EstaLogueado)
-{
-    <div class="alert alert-danger">
-        Debes iniciar sesión para ver tus tareas.
-    </div>
-}
-else
-{
-    <p>Bienvenido, <strong>@Auth.UsuarioActual.Nombre</strong></p>
-
-    <div class="mb-3 d-flex gap-2 align-items-center">
-        <input class="form-control w-50"
-               placeholder="Nueva tarea"
-               @bind="nuevaTarea.Titulo" />
-
-        <button class="btn btn-primary" @onclick="CrearTarea">Agregar</button>
-    </div>
-
-    @if (tareas.Count == 0)
+<div style="min-height: 100vh; background-color: #0d1117; color: white; padding: 2rem 1rem;">
+    @if (!Auth.EstaLogueado)
     {
-        <div class="alert alert-info">No hay tareas registradas.</div>
+        <div style="background-color: #21262d; padding: 1rem; border-radius: 12px; color: #f85149;">
+            ⚠️ Debes iniciar sesión para ver tus tareas.
+        </div>
     }
     else
     {
-        <ul class="list-group">
-            @foreach (var tarea in tareas)
-            {
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <input type="checkbox"
-                               class="form-check-input me-2"
-                               checked="@tarea.Completada"
-                               @onchange="() => MarcarComoCompletada(tarea.Id)" />
+        <h2 class="text-center mb-4" style="color: #58a6ff;">📝 Mis Tareas</h2>
+        <p class="text-center mb-4">Bienvenido, <strong>@Auth.UsuarioActual.Nombre</strong></p>
 
-                        <span style="@(tarea.Completada ? "text-decoration: line-through;" : "")">
-                            @tarea.Titulo
-                        </span>
-                    </div>
-                    <button class="btn btn-sm btn-danger" @onclick="() => EliminarTarea(tarea.Id)">
-                        🗑️ Eliminar
-                    </button>
-                </li>
-            }
-        </ul>
+        <div class="mb-4 d-flex flex-column flex-md-row justify-content-center align-items-stretch gap-2" style="max-width: 600px; margin: auto;">
+            <input class="form-control"
+                   style="background-color: #0d1117; border: 1px solid #30363d; color: white;"
+                   placeholder="Nueva tarea"
+                   @bind="nuevaTarea.Titulo" />
+
+            <button class="btn" style="background-color: #238636; color: white; font-weight: bold;" @onclick="CrearTarea">
+                ➕ Agregar
+            </button>
+        </div>
+
+        @if (tareas.Count == 0)
+        {
+            <div class="text-center" style="color: #8b949e;">No hay tareas registradas.</div>
+        }
+        else
+        {
+            <ul class="list-group" style="max-width: 600px; margin: auto;">
+                @foreach (var tarea in tareas)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center"
+                        style="background-color: #161b22; border: 1px solid #30363d; color: white;">
+                        <div class="d-flex align-items-center">
+                            <input type="checkbox"
+                                   class="form-check-input me-2"
+                                   checked="@tarea.Completada"
+                                   @onchange="(e) => CambiarEstadoTarea(tarea, (bool)e.Value)" />
+
+                            <span style="@(tarea.Completada ? "text-decoration: line-through; color: #8b949e;" : "")">
+                                @tarea.Titulo
+                            </span>
+                        </div>
+                        <button class="btn btn-sm" style="background-color: #da3633; color: white;" @onclick="() => EliminarTarea(tarea.Id)">
+                            🗑️
+                        </button>
+                    </li>
+                }
+            </ul>
+        }
     }
-}
+</div>
 
 @code {
     private List<Tarea> tareas = new();
@@ -79,9 +84,10 @@ else
         }
     }
 
-    private async Task MarcarComoCompletada(int id)
+    private async Task CambiarEstadoTarea(Tarea tarea, bool nuevoEstado)
     {
-        await TareaService.MarcarComoCompletadaAsync(id);
+        tarea.Completada = nuevoEstado;
+        await TareaService.ActualizarTareaAsync(tarea);
         tareas = await TareaService.ObtenerTareasAsync();
     }
 
