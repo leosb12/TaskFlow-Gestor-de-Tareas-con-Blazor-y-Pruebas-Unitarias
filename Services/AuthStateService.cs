@@ -1,42 +1,54 @@
 ﻿using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using Microsoft.EntityFrameworkCore;
+using TaskFlow.Data;
 using TaskFlow.Models;
 
 namespace TaskFlow.Services
 {
     public class AuthStateService
     {
-        private readonly ProtectedSessionStorage _sessionStorage;
+        private readonly ProtectedLocalStorage _storage;
+        private readonly ApplicationDbContext _context;
 
         public Usuario? UsuarioActual { get; private set; }
+        public bool SesionCargada { get; private set; } = false;
 
-        public AuthStateService(ProtectedSessionStorage sessionStorage)
+        public AuthStateService(ProtectedLocalStorage storage, ApplicationDbContext context)
         {
-            _sessionStorage = sessionStorage;
+            _storage = storage;
+            _context = context;
         }
 
         public async Task IniciarSesionAsync(Usuario usuario)
         {
             UsuarioActual = usuario;
-            await _sessionStorage.SetAsync("usuarioId", usuario.Id);
-            await _sessionStorage.SetAsync("usuarioNombre", usuario.Nombre);
+            await _storage.SetAsync("usuarioId", usuario.Id);
         }
 
         public async Task RestaurarSesionAsync()
         {
-            var id = await _sessionStorage.GetAsync<int>("usuarioId");
-            var nombre = await _sessionStorage.GetAsync<string>("usuarioNombre");
-
-            if (id.Success && nombre.Success)
+            try
             {
-                UsuarioActual = new Usuario { Id = id.Value, Nombre = nombre.Value };
+                var id = await _storage.GetAsync<int>("usuarioId");
+                if (id.Success)
+                {
+                    UsuarioActual = await _context.Usuarios
+                        .Include(u => u.Rol)
+                        .FirstOrDefaultAsync(u => u.Id == id.Value);
+                }
             }
+            catch
+            {
+                // Ignorar errores
+            }
+
+            SesionCargada = true;
         }
 
         public async Task CerrarSesionAsync()
         {
             UsuarioActual = null;
-            await _sessionStorage.DeleteAsync("usuarioId");
-            await _sessionStorage.DeleteAsync("usuarioNombre");
+            await _storage.DeleteAsync("usuarioId");
         }
 
         public bool EstaLogueado => UsuarioActual != null;

@@ -1,0 +1,159 @@
+﻿@page "/admin"
+@inject AuthStateService Auth
+@inject TaskFlow.Services.TareaService TareaService
+@inject TaskFlow.Services.UsuarioService UsuarioService
+
+<div style="min-height: 100vh; background-color: #0d1117; color: white; padding: 2rem 1rem;">
+    <h2 class="text-center mb-4" style="color: #58a6ff;">👑 Panel de Administración</h2>
+
+    @if (Auth.UsuarioActual?.Rol?.Nombre != "Admin")
+    {
+        <div class="alert alert-danger text-center" style="background-color: #21262d; border: 1px solid #f85149; color: white;">
+            🚫 No tienes permiso para acceder a esta página.
+        </div>
+    }
+    else
+    {
+        <div class="text-center mb-4">
+            <p>Bienvenido, <strong>@Auth.UsuarioActual.Nombre</strong></p>
+            <p style="color: #8b949e;">Rol: <strong style="color: #58a6ff;">@Auth.UsuarioActual.Rol?.Nombre</strong></p>
+        </div>
+
+        <h5 class="text-center mb-3" style="color: #58a6ff;">👥 Usuarios registrados</h5>
+
+        <div class="table-responsive" style="max-width: 900px; margin: auto;">
+            <table class="table table-dark table-striped">
+                <thead style="background-color: #161b22;">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Tareas</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var usuario in usuarios)
+                    {
+                        <tr style="background-color: #161b22; border-color: #30363d;">
+                            <td>@usuario.Nombre</td>
+                            <td>@usuario.Correo</td>
+                            <td>
+                                @if (editandoRolId == usuario.Id)
+                                {
+                                    <select class="form-select" style="background-color: #0d1117; color: white; border: 1px solid #30363d;" @bind="usuarioNuevoRolId">
+                                        @foreach (var rol in rolesDisponibles)
+                                        {
+                                            <option value="@rol.Id">@rol.Nombre</option>
+                                        }
+                                    </select>
+                                }
+                                else
+                                {
+                                    @usuario.Rol?.Nombre
+                                }
+                            </td>
+                            <td>
+                                <ul class="list-unstyled">
+                                    @foreach (var tarea in tareas.Where(t => t.UsuarioId == usuario.Id))
+                                    {
+                                        <li>
+                                            <input type="checkbox"
+                                                   class="form-check-input me-1"
+                                                   checked="@tarea.Completada"
+                                                   @onchange="(e) => CambiarEstadoTarea(tarea, (bool)e.Value)" />
+                                            <span style="@(tarea.Completada ? "text-decoration: line-through; color: #8b949e;" : "")">
+                                                @tarea.Titulo
+                                            </span>
+                                            <button class="btn btn-sm btn-danger ms-2" @onclick="() => EliminarTarea(tarea.Id)">🗑️</button>
+                                        </li>
+                                    }
+                                </ul>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    @if (editandoRolId == usuario.Id)
+                                    {
+                                        <button class="btn btn-sm btn-success" @onclick="() => GuardarRol(usuario)">💾 Guardar</button>
+                                        <button class="btn btn-sm btn-secondary" @onclick="CancelarEdicion">❌ Cancelar</button>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-sm btn-primary" @onclick="() => EditarRol(usuario)">✏️ Editar Rol</button>
+                                    }
+                                    <button class="btn btn-sm btn-danger" @onclick="() => EliminarUsuario(usuario.Id)">🗑️ Eliminar Usuario</button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+@code {
+    private List<Usuario> usuarios = new();
+    private List<Rol> rolesDisponibles = new();
+    private List<Tarea> tareas = new();
+    private int? editandoRolId = null;
+    private int usuarioNuevoRolId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Esperar a que se restaure la sesión
+        while (!Auth.SesionCargada)
+        {
+            await Task.Delay(100);
+        }
+
+        // Si no está logueado, redirigir
+        if (!Auth.EstaLogueado || Auth.UsuarioActual?.Rol?.Nombre != "Admin")
+        {
+            return;
+        }
+
+        // Cargar datos para el panel
+        usuarios = await UsuarioService.ObtenerTodosConRolAsync();
+        tareas = await TareaService.ObtenerTareasAsync();
+        rolesDisponibles = await UsuarioService.ObtenerRolesAsync();
+    }
+
+    private void EditarRol(Usuario usuario)
+    {
+        editandoRolId = usuario.Id;
+        usuarioNuevoRolId = usuario.RolId;
+    }
+
+    private void CancelarEdicion()
+    {
+        editandoRolId = null;
+    }
+
+    private async Task GuardarRol(Usuario usuario)
+    {
+        usuario.RolId = usuarioNuevoRolId;
+        await UsuarioService.ActualizarAsync(usuario);
+        editandoRolId = null;
+        usuarios = await UsuarioService.ObtenerTodosConRolAsync();
+    }
+
+    private async Task EliminarUsuario(int id)
+    {
+        await UsuarioService.EliminarAsync(id);
+        usuarios = await UsuarioService.ObtenerTodosConRolAsync();
+        tareas = await TareaService.ObtenerTareasAsync();
+    }
+
+    private async Task CambiarEstadoTarea(Tarea tarea, bool nuevoEstado)
+    {
+        tarea.Completada = nuevoEstado;
+        await TareaService.ActualizarTareaAsync(tarea);
+        tareas = await TareaService.ObtenerTareasAsync();
+    }
+
+    private async Task EliminarTarea(int id)
+    {
+        await TareaService.EliminarTareaAsync(id);
+        tareas = await TareaService.ObtenerTareasAsync();
+    }
+}

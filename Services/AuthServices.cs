@@ -17,7 +17,9 @@ namespace TaskFlow.Services
         {
             using var context = _contextFactory.CreateDbContext();
             return await context.Usuarios
+            .Include(u => u.Rol)
                 .FirstOrDefaultAsync(u => u.Correo == correo && u.Contrasena == contrasena);
+
         }
 
         public async Task<bool> RegistrarAsync(RegisterModel model)
@@ -31,7 +33,8 @@ namespace TaskFlow.Services
             {
                 Nombre = model.Nombre,
                 Correo = model.Correo,
-                Contrasena = model.Contrasena
+                Contrasena = model.Contrasena,
+                RolId = 1
             };
 
             context.Usuarios.Add(nuevo);

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TaskFlow.Data;
 
@@ -11,9 +12,11 @@ using TaskFlow.Data;
 namespace TaskFlow.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250609033916_AgregarRolAUsuario")]
+    partial class AgregarRolAUsuario
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,35 +24,6 @@ namespace TaskFlow.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("TaskFlow.Models.Rol", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Nombre = "Usuario"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Nombre = "Admin"
-                        });
-                });
 
             modelBuilder.Entity("TaskFlow.Models.Tarea", b =>
                 {
@@ -81,6 +55,8 @@ namespace TaskFlow.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UsuarioId");
+
                     b.ToTable("Tareas");
                 });
 
@@ -104,30 +80,27 @@ namespace TaskFlow.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RolId")
-                        .HasColumnType("int");
+                    b.Property<string>("Rol")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RolId");
 
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("TaskFlow.Models.Usuario", b =>
+            modelBuilder.Entity("TaskFlow.Models.Tarea", b =>
                 {
-                    b.HasOne("TaskFlow.Models.Rol", "Rol")
-                        .WithMany("Usuarios")
-                        .HasForeignKey("RolId")
+                    b.HasOne("TaskFlow.Models.Usuario", null)
+                        .WithMany("Tareas")
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Rol");
                 });
 
-            modelBuilder.Entity("TaskFlow.Models.Rol", b =>
+            modelBuilder.Entity("TaskFlow.Models.Usuario", b =>
                 {
-                    b.Navigation("Usuarios");
+                    b.Navigation("Tareas");
                 });
 #pragma warning restore 612, 618
         }

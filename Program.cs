@@ -15,8 +15,12 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<TareaService>();
-builder.Services.AddScoped<ProtectedSessionStorage>();
+builder.Services.AddScoped<ProtectedLocalStorage>();
 builder.Services.AddScoped<AuthStateService>();
+builder.Services.AddScoped<UsuarioService>();
+
+
+
 
 
 

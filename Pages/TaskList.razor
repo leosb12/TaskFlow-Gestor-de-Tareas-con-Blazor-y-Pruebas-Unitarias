@@ -5,7 +5,11 @@
 @using TaskFlow.Models
 
 <div style="min-height: 100vh; background-color: #0d1117; color: white; padding: 2rem 1rem;">
-    @if (!Auth.EstaLogueado)
+    @if (cargando)
+    {
+        <p class="text-center" style="color: #8b949e;">🔄 Restaurando sesión...</p>
+    }
+    else if (!Auth.EstaLogueado)
     {
         <div style="background-color: #21262d; padding: 1rem; border-radius: 12px; color: #f85149;">
             ⚠️ Debes iniciar sesión para ver tus tareas.
@@ -13,8 +17,22 @@
     }
     else
     {
-        <h2 class="text-center mb-4" style="color: #58a6ff;">📝 Mis Tareas</h2>
-        <p class="text-center mb-4">Bienvenido, <strong>@Auth.UsuarioActual.Nombre</strong></p>
+        <div class="text-center mb-4">
+            <h2 style="color: #58a6ff;">📝 Mis Tareas</h2>
+            <p>
+                Bienvenido, <strong>@Auth.UsuarioActual.Nombre</strong><br />
+                Rol: <span style="color: #8b949e;">@Auth.UsuarioActual.Rol?.Nombre</span>
+            </p>
+
+            @if (Auth.UsuarioActual?.Rol?.Nombre == "Admin")
+            {
+                <a href="/admin"
+                   class="btn btn-sm mt-2"
+                   style="background-color: #30363d; color: #58a6ff; border: 1px solid #58a6ff;">
+                    🔧 Ir al Panel de Administración
+                </a>
+            }
+        </div>
 
         <div class="mb-4 d-flex flex-column flex-md-row justify-content-center align-items-stretch gap-2" style="max-width: 600px; margin: auto;">
             <input class="form-control"
@@ -57,20 +75,28 @@
         }
     }
 </div>
-
 @code {
     private List<Tarea> tareas = new();
     private Tarea nuevaTarea = new();
+    private bool cargando = true;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!Auth.EstaLogueado)
+        if (firstRender)
         {
-            Navigation.NavigateTo("/login", true);
-            return;
-        }
+            while (!Auth.SesionCargada)
+                await Task.Delay(50);
 
-        tareas = await TareaService.ObtenerTareasAsync();
+            if (!Auth.EstaLogueado)
+            {
+                Navigation.NavigateTo("/login", true);
+                return;
+            }
+
+            tareas = await TareaService.ObtenerTareasAsync();
+            cargando = false;
+            StateHasChanged(); // fuerza el render tras la carga
+        }
     }
 
     private async Task CrearTarea()
