@@ -7,29 +7,29 @@ namespace TaskFlow.Services
 {
     public class AuthStateService
     {
-        private readonly ProtectedLocalStorage _storage;
+        private readonly ProtectedLocalStorage _localStorage;
         private readonly ApplicationDbContext _context;
 
         public Usuario? UsuarioActual { get; private set; }
         public bool SesionCargada { get; private set; } = false;
 
-        public AuthStateService(ProtectedLocalStorage storage, ApplicationDbContext context)
+        public AuthStateService(ProtectedLocalStorage localStorage, ApplicationDbContext context)
         {
-            _storage = storage;
+            _localStorage = localStorage;
             _context = context;
         }
 
         public async Task IniciarSesionAsync(Usuario usuario)
         {
             UsuarioActual = usuario;
-            await _storage.SetAsync("usuarioId", usuario.Id);
+            await _localStorage.SetAsync("usuarioId", usuario.Id);
         }
 
         public async Task RestaurarSesionAsync()
         {
             try
             {
-                var id = await _storage.GetAsync<int>("usuarioId");
+                var id = await _localStorage.GetAsync<int>("usuarioId");
                 if (id.Success)
                 {
                     UsuarioActual = await _context.Usuarios
@@ -48,7 +48,7 @@ namespace TaskFlow.Services
         public async Task CerrarSesionAsync()
         {
             UsuarioActual = null;
-            await _storage.DeleteAsync("usuarioId");
+            await _localStorage.DeleteAsync("usuarioId");
         }
 
         public bool EstaLogueado => UsuarioActual != null;
