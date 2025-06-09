@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskFlow.Models;
 
-namespace TaskFlow.Data
 {
     public class ApplicationDbContext : DbContext
     {
