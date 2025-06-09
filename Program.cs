@@ -18,6 +18,8 @@ builder.Services.AddScoped<TareaService>();
 builder.Services.AddScoped<ProtectedLocalStorage>();
 builder.Services.AddScoped<AuthStateService>();
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddServerSideBlazor()
+    .AddCircuitOptions(o => o.DetailedErrors = true);
 
 
 
@@ -26,11 +28,14 @@ builder.Services.AddScoped<UsuarioService>();
 
 var app = builder.Build();
 
+// Middleware estándar
 if (!app.Environment.IsDevelopment())
 {
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+
+
 
 app.UseHttpsRedirection();
 
