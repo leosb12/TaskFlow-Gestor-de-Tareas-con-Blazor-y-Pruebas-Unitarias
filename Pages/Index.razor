@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject NavigationManager Navigation
+@inject AuthStateService Auth
 
 <div class="bg-dark d-flex justify-content-center align-items-center min-vh-100 px-3">
     <div class="text-center text-light" style="max-width: 500px; width: 100%;">
@@ -7,15 +8,44 @@
         <p class="lead mb-4" style="font-size: 1.25rem;">
             Organiza tus tareas de forma inteligente, rápida y clara.
         </p>
-        <button class="btn btn-primary btn-lg px-5 py-3 fs-5 shadow" @onclick="IrCrearTarea">
-            🚀 Empezar
-        </button>
+
+       <button class="btn btn-primary btn-lg px-5 py-3 fs-5 shadow"
+        @onclick="IrCrearTarea"
+        disabled="@(!botonHabilitado)">
+    @if (botonHabilitado)
+    {
+        <span>🚀 Empezar</span>
+    }
+    else
+    {
+        <span>
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Cargando...
+        </span>
+    }
+</button>
+
     </div>
 </div>
 
 @code {
+    private bool botonHabilitado = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Esperar a que se cargue la sesión correctamente
+        while (!Auth.SesionCargada)
+        {
+            await Task.Delay(100);
+        }
+
+        botonHabilitado = true;
+        StateHasChanged(); // Forzar renderizado
+    }
+
     private void IrCrearTarea()
     {
         Navigation.NavigateTo("/Login");
     }
 }
+
