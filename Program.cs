@@ -9,7 +9,7 @@ using TaskFlow.Services;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddRazorPages();
-var connectionString = builder.Configuration["DefaultConnection"];
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 Console.WriteLine("🔍 Cadena de conexión: " + connectionString); // para depuración
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
