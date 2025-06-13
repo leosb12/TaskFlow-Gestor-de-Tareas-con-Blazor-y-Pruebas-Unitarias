@@ -16,10 +16,7 @@ namespace TaskFlow.Services
             _context = context;
         }
 
-        public async Task<List<Tarea>> ObtenerTareasAsync()
-        {
-            return await _context.Tareas.ToListAsync();
-        }
+        
 
         public async Task CrearTareaAsync(Tarea tarea)
         {
@@ -53,5 +50,13 @@ namespace TaskFlow.Services
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<List<Tarea>> ObtenerTareasPorUsuarioAsync(int usuarioId)
+        {
+            return await _context.Tareas
+                .Where(t => t.UsuarioId == usuarioId)
+                .ToListAsync();
+        }
+
     }
 }

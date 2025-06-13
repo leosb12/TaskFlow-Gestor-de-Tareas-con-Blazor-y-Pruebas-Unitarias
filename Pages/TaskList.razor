@@ -120,6 +120,7 @@
     private async Task EliminarTarea(int id)
     {
         await TareaService.EliminarTareaAsync(id);
-        tareas = await TareaService.ObtenerTareasAsync();
+        tareas = await TareaService.ObtenerTareasPorUsuarioAsync(Auth.UsuarioActual.Id);
+
     }
 }
