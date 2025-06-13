@@ -16,7 +16,10 @@ namespace TaskFlow.Services
             _context = context;
         }
 
-        
+        public async Task<List<Tarea>> ObtenerTareasAsync()
+        {
+            return await _context.Tareas.ToListAsync();
+        }
 
         public async Task CrearTareaAsync(Tarea tarea)
         {
