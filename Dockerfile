@@ -1,22 +1,14 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-
+# Etapa 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-COPY *.sln ./
-COPY TaskFlow/*.csproj TaskFlow/
-COPY TaskFlow.Tests/*.csproj TaskFlow.Tests/
-
-
-RUN dotnet restore TaskFlow.sln
-
-
 COPY . .
 
+RUN dotnet restore TaskFlow.sln
 RUN dotnet publish TaskFlow.sln -c Release -o /app/publish
 
-FROM base AS final
+# Etapa 2: Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app/publish .
 
