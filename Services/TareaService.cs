@@ -7,7 +7,7 @@ using TaskFlow.Models;
 
 namespace TaskFlow.Services
 {
-    public class TareaService
+    public class TareaService : ITareaService
     {
         private readonly ApplicationDbContext _context;
 

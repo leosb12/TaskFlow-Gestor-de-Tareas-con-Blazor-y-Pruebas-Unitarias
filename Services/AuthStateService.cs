@@ -5,7 +5,7 @@ using TaskFlow.Models;
 
 namespace TaskFlow.Services
 {
-    public class AuthStateService
+    public class AuthStateService : IAuthStateService
     {
         private readonly ProtectedLocalStorage _localStorage;
         private readonly ApplicationDbContext _context;

@@ -6,7 +6,7 @@ using TaskFlow.Models;
 
 namespace TaskFlow.Services
 {
-    public class UsuarioService
+    public class UsuarioService : IUsuarioService
     {
         private readonly ApplicationDbContext _context;
 

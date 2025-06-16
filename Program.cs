@@ -14,10 +14,11 @@ Console.WriteLine("🔍 Cadena de conexión: " + connectionString); // para depu
 builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddServerSideBlazor();
-builder.Services.AddScoped<TareaService>();
+builder.Services.AddScoped<ITareaService, TareaService>();
 builder.Services.AddScoped<ProtectedLocalStorage>();
-builder.Services.AddScoped<AuthStateService>();
-builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<IAuthStateService, AuthStateService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+
 builder.Services.AddServerSideBlazor()
     .AddCircuitOptions(o => o.DetailedErrors = true);
 

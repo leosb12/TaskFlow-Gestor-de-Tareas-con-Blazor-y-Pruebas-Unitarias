@@ -1,7 +1,9 @@
 ﻿@page "/admin"
-@inject AuthStateService Auth
-@inject TaskFlow.Services.TareaService TareaService
-@inject TaskFlow.Services.UsuarioService UsuarioService
+@inject IAuthStateService Auth
+@inject ITareaService TareaService
+@inject IUsuarioService UsuarioService
+
+
 
 <div style="min-height: 100vh; background-color: #0d1117; color: white; padding: 2rem 1rem;">
     <h2 class="text-center mb-4" style="color: #58a6ff;">👑 Panel de Administración</h2>
@@ -118,18 +120,18 @@
         rolesDisponibles = await UsuarioService.ObtenerRolesAsync();
     }
 
-    private void EditarRol(Usuario usuario)
+   public void EditarRol(Usuario usuario)
     {
         editandoRolId = usuario.Id;
         usuarioNuevoRolId = usuario.RolId;
     }
 
-    private void CancelarEdicion()
+    public void CancelarEdicion()
     {
         editandoRolId = null;
     }
 
-    private async Task GuardarRol(Usuario usuario)
+    public async Task GuardarRol(Usuario usuario)
     {
         usuario.RolId = usuarioNuevoRolId;
         await UsuarioService.ActualizarAsync(usuario);
@@ -137,21 +139,21 @@
         usuarios = await UsuarioService.ObtenerTodosConRolAsync();
     }
 
-    private async Task EliminarUsuario(int id)
+    public async Task EliminarUsuario(int id)
     {
         await UsuarioService.EliminarAsync(id);
         usuarios = await UsuarioService.ObtenerTodosConRolAsync();
         tareas = await TareaService.ObtenerTareasAsync();
     }
 
-    private async Task CambiarEstadoTarea(Tarea tarea, bool nuevoEstado)
+    public async Task CambiarEstadoTarea(Tarea tarea, bool nuevoEstado)
     {
         tarea.Completada = nuevoEstado;
         await TareaService.ActualizarTareaAsync(tarea);
         tareas = await TareaService.ObtenerTareasAsync();
     }
 
-    private async Task EliminarTarea(int id)
+    public async Task EliminarTarea(int id)
     {
         await TareaService.EliminarTareaAsync(id);
         tareas = await TareaService.ObtenerTareasAsync();

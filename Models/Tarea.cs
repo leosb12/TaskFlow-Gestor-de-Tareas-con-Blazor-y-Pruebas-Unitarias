@@ -7,7 +7,9 @@ namespace TaskFlow.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "⚠️Debe escribir su tarea⚠️")]
+        [StringLength(100, ErrorMessage = "⚠️Máx. 100 caracteres⚠️")]
+
         public string Titulo { get; set; } = string.Empty;
         public string Descripcion { get; set; } = string.Empty;
 

@@ -1,8 +1,11 @@
 ﻿@page "/tareas"
-@inject TaskFlow.Services.TareaService TareaService
-@inject AuthStateService Auth
+@inject ITareaService TareaService
+@inject IAuthStateService Auth
 @inject NavigationManager Navigation
 @using TaskFlow.Models
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+
 
 <div style="min-height: 100vh; background-color: #0d1117; color: white; padding: 2rem 1rem;">
     @if (cargando)
@@ -34,16 +37,31 @@
             }
         </div>
 
-        <div class="mb-4 d-flex flex-column flex-md-row justify-content-center align-items-stretch gap-2" style="max-width: 600px; margin: auto;">
-            <input class="form-control"
-                   style="background-color: #0d1117; border: 1px solid #30363d; color: white;"
-                   placeholder="Nueva tarea"
-                   @bind="nuevaTarea.Titulo" />
+                   <EditForm Model="nuevaTarea" OnValidSubmit="CrearTarea">
+                    <DataAnnotationsValidator />
 
-            <button class="btn" style="background-color: #238636; color: white; font-weight: bold;" @onclick="CrearTarea">
-                ➕ Agregar
-            </button>
-        </div>
+                    <div class="mb-4 d-flex flex-column justify-content-center align-items-center" style="max-width: 600px; margin: auto;">
+                        <div class="w-100 d-flex flex-column flex-md-row gap-2">
+                            <InputText class="form-control"
+                                       style="background-color: #0d1117; border: 1px solid #30363d; color: white;"
+                                       placeholder="Nueva tarea"
+                                       @bind-Value="nuevaTarea.Titulo" />
+
+                            <button class="btn"
+                                    type="submit"
+                                    style="background-color: #238636; color: white; font-weight: bold;">
+                                ➕ Agregar
+                            </button>
+                        </div>
+
+                        <ValidationMessage For="@(() => nuevaTarea.Titulo)" class="mi-error-validacion" />
+
+
+
+                    </div>
+                </EditForm>
+
+
 
         @if (tareas.Count == 0)
         {
@@ -93,7 +111,7 @@
                 return;
             }
 
-            tareas = await TareaService.ObtenerTareasAsync();
+            tareas = await TareaService.ObtenerTareasPorUsuarioAsync(Auth.UsuarioActual.Id);
             cargando = false;
             StateHasChanged(); // fuerza el render tras la carga
         }
@@ -106,7 +124,7 @@
             nuevaTarea.UsuarioId = Auth.UsuarioActual?.Id ?? 0;
             await TareaService.CrearTareaAsync(nuevaTarea);
             nuevaTarea = new();
-            tareas = await TareaService.ObtenerTareasAsync();
+            tareas = await TareaService.ObtenerTareasPorUsuarioAsync(Auth.UsuarioActual.Id);
         }
     }
 
@@ -114,7 +132,7 @@
     {
         tarea.Completada = nuevoEstado;
         await TareaService.ActualizarTareaAsync(tarea);
-        tareas = await TareaService.ObtenerTareasAsync();
+        tareas = await TareaService.ObtenerTareasPorUsuarioAsync(Auth.UsuarioActual.Id);
     }
 
     private async Task EliminarTarea(int id)
