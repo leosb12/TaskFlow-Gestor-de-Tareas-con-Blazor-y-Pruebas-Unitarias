@@ -8,6 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TaskFlow.Tests\**" />
+    <Content Remove="TaskFlow.Tests\**" />
+    <EmbeddedResource Remove="TaskFlow.Tests\**" />
+    <None Remove="TaskFlow.Tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="bunit" Version="1.40.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="9.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.5">
