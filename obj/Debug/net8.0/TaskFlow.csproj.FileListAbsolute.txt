@@ -247,3 +247,4 @@ D:\TaskFlow\TaskFlow\obj\Debug\net8.0\refint\TaskFlow.dll
 D:\TaskFlow\TaskFlow\obj\Debug\net8.0\TaskFlow.pdb
 D:\TaskFlow\TaskFlow\obj\Debug\net8.0\TaskFlow.genruntimeconfig.cache
 D:\TaskFlow\TaskFlow\obj\Debug\net8.0\ref\TaskFlow.dll
+D:\TaskFlow\TaskFlow\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
