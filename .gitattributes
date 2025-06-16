@@ -1,15 +1,16 @@
 
 *.razor linguist-language=C#
-
-
 *.cshtml linguist-language=C#
+
 
 *.json linguist-documentation
 *.yml linguist-documentation
 *.lock linguist-generated
-
 *.html linguist-generated
 *.htm linguist-generated
 *.svg linguist-generated
 *.css linguist-generated
 *.js linguist-generated
+
+
+/TaskFlow.Tests/coveragereport/** linguist-vendored
