@@ -1,10 +1,15 @@
-# Fuerza a GitHub a reconocer los archivos .razor como C#
+
 *.razor linguist-language=C#
 
-# Opcional: si usás .cshtml
+
 *.cshtml linguist-language=C#
 
-# Ignora archivos de configuración o paquetes que distorsionan estadísticas
 *.json linguist-documentation
 *.yml linguist-documentation
 *.lock linguist-generated
+
+*.html linguist-generated
+*.htm linguist-generated
+*.svg linguist-generated
+*.css linguist-generated
+*.js linguist-generated
