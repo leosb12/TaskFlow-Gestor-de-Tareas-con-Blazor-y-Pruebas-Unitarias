@@ -1,4 +1,4 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "dotnet publish TaskFlow/TaskFlow.csproj -c Release -o out"
+buildCommand = "dotnet publish TaskFlow.Deploy.sln -c Release -o out"
 startCommand = "dotnet out/TaskFlow.dll"
